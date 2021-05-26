@@ -1,0 +1,212 @@
+<title>部门管理</title>
+
+<!--<div class="layui-card layadmin-header">-->
+<!--    <div class="layui-breadcrumb" lay-filter="breadcrumb">-->
+<!--        <a lay-href="">主页</a>-->
+<!--        <a><cite>品牌管理</cite></a>-->
+<!--        <a><cite>品牌管理</cite></a>-->
+<!--    </div>-->
+<!--</div>-->
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto" lay-filter="layadmin-department-formlist">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">品牌名称：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="departmentbrandName" placeholder="品牌名称" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+<!--                <div class="layui-inline">-->
+<!--                    <label class="layui-form-label">所属品牌</label>-->
+<!--                    <div class="layui-input-inline">-->
+<!--                        <script type="text/html" lay-url="brand/brands" lay-done="layui.data.done(d);" template>-->
+<!--                            <select name="departmentName" lay-filter="LAY-brandstore-select-brandcode">-->
+<!--                                <option value="">请选择品牌</option>-->
+<!--                                {{# layui.each(d.data, function(index, item){ }}-->
+<!--                                <option value="{{ item.brandCode }}">{{ item.brandName }}</option>-->
+<!--                                {{# }); }}-->
+<!--                            </select>-->
+<!--                        </script>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="layui-inline">-->
+<!--                    <label class="layui-form-label">编号</label>-->
+<!--                    <div class="layui-input-inline">-->
+<!--                        <select name="departmentSerialNumber" id="departmentSerialNumber" lay-filter="">-->
+<!--                            <option value="">请选择门店</option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="layui-inline">-->
+<!--                    <label class="layui-form-label">创建人</label>-->
+<!--                    <div class="layui-input-inline">-->
+<!--                        <select name="departmenCreatet" id="departmenCreatet" lay-filter="">-->
+<!--                            <option value="">请选择门店</option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </div>-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">名称：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="departmentName" placeholder="请输入名称" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">编号：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="departmentSerialNumber" placeholder="请输入编号" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">创建人：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="departmenCreatet" placeholder="请输入创建人" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+<!--                <div class="layui-inline">-->
+<!--                    <label class="layui-form-label">状态</label>-->
+<!--                    <div class="layui-input-block">-->
+<!--                        <select name="status">-->
+<!--                            <option value="">全部</option>-->
+<!--                            <option value="0">正常</option>-->
+<!--                            <option value="1">禁用</option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+                <div class="layui-inline">
+                    <button class="layui-btn layuiadmin-btn-department" lay-submit lay-filter="LAY-department-back-search">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-card-body">
+            <div style="padding-bottom: 10px;">
+                <button class="layui-btn layuiadmin-btn-department" data-type="add">添加部门</button>
+            </div>
+
+            <table id="LAY-department-back-manage" lay-filter="LAY-department-back-manage"></table>
+<!--            <script type="text/html" id="table-beandlist-status">-->
+<!--                {{#  if(d.status == 1){ }}-->
+<!--                <button class="layui-btn layui-btn-primary layui-btn-xs">禁用</button>-->
+<!--                {{#  } else { }}-->
+<!--                <button class="layui-btn layui-btn-xs">正常</button>-->
+
+<!--                {{#  } }}-->
+<!--            </script>-->
+            <script type="text/html" id="table-departmentlist-department">
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="departmentview"><i class="layui-icon layui-icon-survey"></i>查看</a>
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="departmentedit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="departmentdel"><i class="layui-icon layui-icon-delete"></i>删除</a>
+            </script>
+        </div>
+    </div>
+</div>
+<script>
+    layui.data.done = function(d){
+        layui.use(['form'], function(){
+            var form = layui.form;
+            form.render(); //渲染该模板下的动态表单
+        });
+    };
+    layui.use('department', layui.factory('department')).use(['admin','department',  'table'], function(){
+        var $ = layui.$
+            ,view = layui.view
+            ,table = layui.table
+            ,admin = layui.admin
+            ,form = layui.form
+            ,util = layui.util
+
+        form.render(null, 'layadmin-department-formlist');
+
+        //监听搜索
+        form.on('submit(LAY-department-back-search)', function(data){
+            var field = data.field;
+            var datas = {
+                "brand": field.departmentbrandName,
+                "founder": field.departmenCreatet,
+                "number":field.departmentSerialNumber,
+                "deptName":field.departmentName
+            }
+            //执行重载
+            table.reload('LAY-department-back-manage', {
+                where: datas
+            });
+        });
+
+        //事件
+        var active = {
+            add: function(){
+                admin.popup({
+                    title: '添加部门'
+                    ,area: ['500px', '400px']
+                    ,shadeClose: false
+                    ,id: 'LAY-popup-department-add'
+                    ,success: function(layero, index){
+                        view(this.id).render('infrastructure/departmentAddEdit/index').done(function(){
+                            form.render(null, 'layuiadmin-form-departmentAddEdit');
+                            //监听提交
+                            form.on('submit(lay-departmentAddEdit-department)', function(data){
+                                var field = data.field; //获取提交的字段
+                                // var patrn=/^\d+$|^\d+[.]?\d+$////^[0-9a-zA-Z]*$/g;
+                                // if (!patrn.exec(field.number)){
+                                //     layer.msg("商品编号只能输入数字",{time:1500});
+                                //     return
+                                // }
+                                var patrnName=/^[A-Za-z0-9]+$///正确
+                                if (!patrnName.exec(field.number)){
+                                    layer.msg("编码只能输入字母和数字",{time:1500});
+                                    return
+                                }
+                                $.ajax({
+                                    method: "post",
+                                    url: "dept/save",
+                                    contentType: 'application/json',
+                                    dataType: "json",
+                                    data: JSON.stringify(field),
+                                    success:function(ret){
+                                        if(ret.code == 0){
+                                            layui.table.reload('LAY-department-back-manage'); //重载表格
+                                            layer.close(index); //执行关闭
+                                            layer.msg('添加成功',{time:1500});
+                                        }else{
+                                            layer.msg(ret.message,{time:1500});
+                                            return;
+                                        }
+                                    },
+                                    error:function(e){
+                                        layer.msg('添加失败');
+                                        return;
+                                    }
+                                });
+                            });
+                            //监听返回
+                            $('#lay-departmentAddEdit-department-cancel').click(function () {
+                                layer.closeAll();
+                            })
+
+                        });
+                    }
+                });
+            }
+        }
+        $('.layui-btn.layuiadmin-btn-department').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
+</script>
+<style>
+    .line_ht35{
+        line-height: 37px;
+    }
+    .layui-form-label{
+        padding: 9px 15px!important;
+    }
+</style>
