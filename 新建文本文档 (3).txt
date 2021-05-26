@@ -1,0 +1,447 @@
+
+
+<div class="layui-form" lay-filter="layuiadmin-form-roleAddEdit" style="padding: 20px;">
+
+    <!--角色主键id(更新时传递)-->
+    <div class="layui-form-item mt-20 layui-hide">
+        <div class="layui-col-xs8 layui-col-md8">
+            <script type="text/html" template>
+                <input type="text" id="roleId" name="id" value="{{d.params.id}}">
+                <input type="text" id="typeFlag" name="typeFlag">
+            </script>
+        </div>
+    </div>
+
+    <script type="text/html" lay-done="layui.data.done(d);" template>
+  </script>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色属性</label>
+        <div class="layui-input-block">
+            <script type="text/html" template>
+                <input type="radio" disabled {{# if( d.params.brandY != undefined ) { }} {{# } }} name="roleFlag" id="chain_roleEdit" lay-filter="roleFlag" value="0" title="连锁角色" checked>
+<!--                {{d.params.typeFlag== 1 ? 'checked':'' }}-->
+                <input type="radio" disabled {{# if( d.params.brandY != undefined ) { }} {{# } }}  name="roleFlag" id="brand_roleEdit" lay-filter="roleFlag" value="1" title="品牌角色"  >
+                <input type="radio" disabled {{# if( d.params.brandY != undefined ) { }} {{# } }}  name="roleFlag" id="agent_roleEdit" lay-filter="roleFlag" value="2" title="代理商角色"  >
+            </script>
+        </div>
+    </div>
+
+    <div class="layui-form-item"  id="realSelect">
+        <label class="layui-form-label"><span class="c-red">*</span>所属品牌</label>
+        <div class="layui-input-block" >
+            <script type="text/html" lay-url="brand/brands" lay-done="layui.data.done1(d);" id="table-roleManagementAddEdit" lay-filter="table-detail-tableType"
+                    template>
+                <select name="brandCode"  id="LAY-user-login-brand" lay-filter="LAY-user-login-brand" {{#  if(d.params.brandCode !='' && d.params.brandCode!=null && d.params.brandCode!=undefined){ }} {{# } }}>
+                    <option value="">请选择品牌</option>
+                    {{# layui.each(d.data, function(index, item){ }}
+                    {{# if(item.status == 0){ }}
+                    <option value="{{ item.brandCode }}" {{item.brandCode== d.params.brandCode ? 'selected':'' }}  >{{ item.brandName }}</option>
+                    {{# } }}
+                    {{# }); }}
+                </select>
+            </script>
+        </div>
+    </div>
+    <div class="layui-form-item"  id="agentSelect">
+        <label class="layui-form-label"><span class="c-red">*</span>代理商</label>
+        <div class="layui-input-block" >
+            <script type="text/html" lay-done="layui.data.done2(d);"
+                    template>
+                <select name="agentCode" id="LAY-user-login-brand-agent" lay-filter="LAY-user-login-brand-agent" {{#  if(d.params.brandCode !='' && d.params.brandCode!=null && d.params.brandCode!=undefined){ }} {{# } }}>
+                    <option value="">请选择代理商</option>
+                    {{# layui.each(d.data, function(index, item){ }}
+                    {{# if(item.status == 0){ }}
+                    <option value="{{ item.brandCode }}" {{item.brandCode== d.params.brandCode ? 'selected':'' }}  >{{ item.brandName }}</option>
+                    {{# } }}
+                    {{# }); }}
+                </select>
+            </script>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span class="c-red">*</span>角色名称</label>
+        <div class="layui-input-block">
+            <script type="text/html" template>
+                <input id="menuIds" value="{{d.params.menuAuthen || ''}}" style="display: none"/>
+                <input type="text" maxlength="10" name="roleName" id="roleName"   lay-verify="required" value="{{ d.params.roleName || '' }}"
+                       placeholder="请输入角色名称" autocomplete="off" class="layui-input">
+            </script>
+
+        </div>
+    </div>
+    <div class="layui-form-item" style="display: none;">
+        <div class="layui-input-block">
+            <script type="text/html" template>
+                <input type="text" name="id"  value="{{ d.params.id }}">
+            </script>
+
+        </div>
+    </div>
+
+<!--    <div class="layui-form-item" lay-filter="layui-form-role-div">-->
+<!--      <label class="layui-form-label">权限范围</label>-->
+<!--        <script type="text/html" lay-url="menu/twoMenus" lay-done="layui.data.done(d);" template>-->
+<!--          <div class="layui-input-block" lay-filter="LAY-user-twoMenus-type">-->
+<!--            {{# layui.each(d.data, function(index, item){ }}-->
+<!--            <input type="checkbox"  {{ getType(item.id,d.params.menuAuthen) }}  name="menuAuthen" lay-skin="primary" value="{{ item.id }}" title="{{ item.title }}">-->
+<!--            {{# }); }}-->
+<!--          </div>-->
+<!--        </script>-->
+<!--    </div>-->
+
+    <!--新版权限设置start-->
+    <div class="layui-form-item mt-20">
+        <button type="button" class="layui-btn layui-btn-xs layui-btn-primary" onclick="checkAll('#LAY-dish-table-tree-index')">全选</button>
+        <button type="button" class="layui-btn layui-btn-xs layui-btn-primary" onclick="uncheckAll('#LAY-dish-table-tree-index')">取消</button>
+        <button type="button" class="layui-btn layui-btn-xs layui-btn-primary" onclick="showAll('#LAY-dish-table-tree-index')">展开</button>
+        <button type="button" class="layui-btn layui-btn-xs layui-btn-primary" onclick="closeAll('#LAY-dish-table-tree-index')">收起</button>
+        <label class="layui-form-label"><span class="c-red">*</span>权限设置</label>
+        <div class="layui-input-block">
+            <ul id="roleZtreeAddEdit" class="ztree"></ul>
+        </div>
+    </div>
+    <!--新版权限设置end-->
+
+<!--    <div class="layui-form-item" id="" style="display: none;">-->
+<!--        <label class="layui-form-label">角色状态</label>-->
+<!--        <div class="layui-input-block">-->
+<!--            <script type="text/html" template>-->
+<!--                <input type="checkbox" name="roleStatus"-->
+<!--                       lay-text="正常|禁用" value="1" lay-skin="switch" checked {{ d.params.roleStatus == 1 ? 'checked' : '' }} >-->
+<!--            </script>-->
+<!--        </div>-->
+<!--    </div>-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">具体描述</label>
+        <div class="layui-input-block">
+            <script type="text/html" template>
+                <textarea type="text" name="remark" id="remark"  autocomplete="off" class="layui-textarea">{{ d.params.remark || '' }}</textarea>
+            </script>
+        </div>
+    </div>
+    <div style="text-align: center;margin-top: 35px">
+        <button type="button" style="width: 150px;margin-left: 25px;" class="layui-btn layui-btn-primary tracking-btn-export"  id="LAY-user-roleManagementAddEdit-cancel">取消</button>
+        <button type="button" style="width: 150px;margin-left: 25px;" class="layui-btn layuiadmin-btn-brand tracking-btn-export" lay-submit lay-filter="LAY-user-roleManagementAddEdit-submit">确定</button>
+    </div>
+</div>
+
+<script>
+    var lianList = "";
+    var brandList = "";
+    var agentList = "";
+    layui.data.done = function(d){
+    console.log(d,1234)
+        layui.use(['form'], function(){
+            var $ = layui.$
+                ,form = layui.form;
+            // var roleId = $("#roleId").val();
+            // var publicBrandCode = $("#publicBrandCode").val();
+
+            // if(roleId != null && roleId!='undefined'){
+            //     $("#roleName").attr('disabled', 'disabled');
+            //     $("#roleName").addClass("layui-disabled");
+            // }
+            // if(publicBrandCode != null && publicBrandCode !="" && publicBrandCode!='undefined'){
+            //     $("#chain_roleEdit").attr('disabled', 'disabled');
+            //     $("#brand_roleEdit").attr('disabled', 'disabled');
+            //     $("#brand_roleEdit").attr('checked', 'checked');
+            //     $("#realSelect").css({display:'block'});
+            //
+            // }
+            // $("#roleName").attr('disabled', 'disabled');
+            $("#table-roleManagementAddEdit").attr('disabled', 'disabled');
+            var oo = new Object();
+            /*oo.brandStyle = "";
+            oo.menuIds = "";*/
+            oo.brandStyle = 1;
+            oo.menuIds = "";
+            $.ajax({
+                type: "post",
+                url: "menu/role2ZtreeData",
+                data: oo,
+                success:function(res){
+                    console.log(res,559)
+                    // brandList =  res.data.trees;
+                    var setting = {check:{enable:true},data:{simpleData:{enable:true}}};
+                    setting.check.chkboxType = { "Y" : "ps", "N" : "ps" };
+                    $.fn.zTree.init($("#roleZtreeAddEdit"), setting, res.data.trees);
+                    let aaa=[],bbb=res.data.trees,ccc=[];
+                    d.params.menuAuthen.forEach((item1,index1)=>{
+                        res.data.trees.forEach((item,index)=>{
+                            if(item1==item.id){
+                                aaa.push(item)
+                                console.log(aaa)
+                                bbb.splice(index,1)
+                            }
+                        })
+                    })
+                    bbb.forEach((item,index)=>{
+                        console.log(item,'bbb')
+                        ccc.push({checked: false,id:item.id,name:item.name,pId:item.pId})
+                    })
+                    ccc.forEach((item,index)=>{
+                        aaa.push(item)
+                    })
+                    // lianList = res.data.trees;
+                    console.log(aaa,'aaa')
+                    lianList = aaa;
+                    $("#typeFlag").val(d.params.typeFlag);//默认
+                    loadRoleList(d.params.brandCode,d.params.agentCode);//默认代理商
+                    // loadMenuList();
+                    // $("#chain_roleEdit").attr('disabled', 'disabled');
+                    // $("#brand_roleEdit").attr('disabled', 'disabled');
+                    // $("#agent_roleEdit").attr('disabled', 'disabled');
+                    console.log(d.params.typeFlag,'d.params.typeFlag',lianList)
+                    if(d.params.typeFlag == 1){
+                        $("#agentSelect").css({'display':'none'});
+                        $("#brand_roleEdit").attr('checked', 'checked');
+                        setTree(lianList);
+                    }else if(d.params.typeFlag == 2){
+                        $("#realSelect").css({'display':'none'});
+                        $("#agentSelect").css({'display':'none'});
+                        $("#chain_roleEdit").attr('checked', 'checked');
+                        setTree(lianList);//全部改成连锁
+                    }else if(d.params.typeFlag == 3){
+                        $("#agent_roleEdit").attr('checked', 'checked');
+                        setTree(lianList);//全部改成连锁
+                    }else {
+
+                    }
+                },
+                error:function(e){
+                    layer.msg('菜单查询失败');
+                    return;
+                }
+            });
+            $.ajax({
+                type: "get",
+                url: "rest/loginUser",
+                contentType: 'application/json',
+                dataType: "json",
+                success:function(ret){
+                    if(ret.data.typeFlag == 1){
+                        //品牌
+                        $('#chain_roleEdit').attr('disabled','disabled')
+
+                    }else if(ret.data.typeFlag == 2){
+                        //连锁
+                    }else if(ret.data.typeFlag == 3){
+                        //代理商
+                        $('#chain_roleEdit').attr('disabled','disabled')
+                        $('#brand_roleEdit').attr('disabled','disabled')
+
+                    }
+
+                },
+                error:function(e){
+                    layer.msg('修改失败');
+                    return;
+                }
+            });
+            form.render();
+        });
+
+    }
+
+    layui.data.done1 = function(d){
+
+        layui.use(['form'], function(){
+            var form = layui.form,$ = layui.$;
+            form.render();
+            var publicBrandCode = $("#publicBrandCode").val();
+            if(publicBrandCode != null && publicBrandCode !="" && publicBrandCode!='undefined') {
+                $("#LAY-user-login-brand").attr("lay-verify", "required");
+            }else{
+                $("#LAY-user-login-brand").removeAttr("lay-verify");
+            }
+        });
+    }
+    layui.data.done2 = function(d){
+
+        layui.use(['form'], function(){
+            var form = layui.form,$ = layui.$;
+            form.render();
+            var publicBrandCode = $("#publicBrandCode").val();
+            if(publicBrandCode != null && publicBrandCode !="" && publicBrandCode!='undefined') {
+                $("#LAY-user-login-brand").attr("lay-verify", "required");
+            }else{
+                $("#LAY-user-login-brand").removeAttr("lay-verify");
+            }
+        });
+    }
+
+    // function loadMenuList(){
+        // var $ = layui.$;
+        // $.ajax({
+        //     type: "post",
+        //     url: "menu/role2ZtreeData",
+        //     data: oo,
+        //     success:function(d){
+        //         brandList =  d.data.trees;
+        //     },
+        //     error:function(e){
+        //         layer.msg('菜单查询失败');
+        //         return;
+        //     }
+        // });
+    // }
+    //代理商
+    function setRoleSelect(res,data){
+        console.log(res,data)
+        var $ = layui.$;
+        var form = layui.form;
+        var userSelect = $("#LAY-user-login-brand-agent");
+        userSelect.empty();
+        userSelect.html('<option value="">请选择代理商</option>');
+        for(var i=0;i<res.length;i++){
+            if(res[i].agentCode == data){
+                userSelect.append("<option selected value=" +res[i].agentCode  + ">"
+                    + res[i].agentName + "</option>");
+            }else {
+                userSelect.append("<option value=" +res[i].agentCode  + ">"
+                    + res[i].agentName + "</option>");
+            }
+
+        }
+        form.render('select');
+        setTimeout(function() {
+            $('#LAY-user-login-brand-agent .layui-form-select').addClass('layui-form-selected');
+            $('#LAY-user-login-brand-agent .layui-anim-upbit').find('dd').eq(0).addClass('layui-select-tips layui-this')
+        },40)
+    }
+    //查询下拉框
+    function loadRoleList(code,flag){
+        console.log(code,flag,321)
+        var $ = layui.$;
+        var form = layui.form;
+        // if(code == ''){
+        //     $("#LAY-branroleManagementAddEditAddd-agent").html('<option value="">请选择代理商</option>')
+        //     return
+        // }
+        var datas = {
+            brandCode:code,
+            page:0,
+            limit:0
+        }
+        $.ajax({
+            type: "post",
+            url: "agent/pageAgent",
+            data:JSON.stringify(datas),
+            contentType: 'application/json',
+            success:function(res){
+                if(res.code == 0){
+                    setRoleSelect(res.data.list,flag);
+                }
+
+            },
+            error:function(e){
+                layer.msg('查询失败');
+                return;
+            }
+        });
+    }
+    function setTree(treeList){
+        console.log(treeList,1112233)
+        var $ = layui.$;
+        // var roleId = $("#roleId").val();
+        // if(roleId != null && roleId!='undefined'){
+        //     $("#roleName").attr('disabled', 'disabled');
+        //     $("#roleName").addClass("layui-disabled");
+        // }
+        var setting = {check:{enable:true},data:{simpleData:{enable:true}}};
+        setting.check.chkboxType = { "Y" : "ps", "N" : "ps" };
+        $.fn.zTree.init($("#roleZtreeAddEdit"), setting, treeList);
+    }
+
+    layui.use(['admin', 'form', 'user'], function(){
+        var $ = layui.$
+            ,form = layui.form;
+        // loadMenuList();
+        form.on('radio(roleFlag)', function (data) {
+            // $("#LAY-user-login-brand").val("");
+            form.render("select");
+            // $("#roleName").val("");
+            // $("#remark").val("");
+            if(data.value == 0){
+                $("#LAY-user-login-brand").removeAttr("lay-verify");
+                $("#realSelect").css({display:'none'});
+                $("#agentSelect").css({display:'none'});
+                $("#typeFlag").val("2");
+                setTree(lianList);
+
+            }else if(data.value == 1){
+                $("#realSelect").css({display:'block'});
+                $("#LAY-user-login-brand").attr("lay-verify","required");
+                $("#agentSelect").css({display:'none'});
+                $("#typeFlag").val("1");
+                setTree(lianList);//全部改成连锁
+            }else {
+                $("#realSelect").css({display:'block'});
+                $("#agentSelect").css({display:'block'});
+                $("#typeFlag").val("3");
+                setTree(lianList);//全部改成连锁
+            }
+            // if(data.value == 0){
+            //     $("#LAY-roleManagementAddEditAdd-brand").removeAttr("lay-verify");
+            //     $("#LAY-branroleManagementAddEditAddd-agent").removeAttr("lay-verify");
+            //     $("#realSelect").css({display:'none'});
+            //     $("#agentSelect").css({display:'none'});
+            //     $("#typeFlag").val("2");
+            //     setTree(lianList);
+            //
+            // }else if(data.value == 1){
+            //     $("#realSelect").css({display:'block'});
+            //     $("#LAY-branroleManagementAddEditAddd-agent").removeAttr("lay-verify");
+            //     $("#LAY-roleManagementAddEditAdd-brand").attr("lay-verify","required");
+            //     $("#agentSelect").css({display:'none'});
+            //     $("#typeFlag").val("1");
+            //     setTree(brandList);
+            // }else {
+            //     $("#LAY-roleManagementAddEditAdd-brand").attr("lay-verify","required");
+            //     $("#LAY-branroleManagementAddEditAddd-agent").attr("lay-verify","required");
+            //     $("#realSelect").css({display:'block'});
+            //     $("#agentSelect").css({display:'block'});
+            //     $("#typeFlag").val("3");
+            //     setTree(brandList);//此处得改
+            // }
+        });
+        form.on('select(LAY-user-login-brand)', function(data){
+            loadRoleList(data.value,"");
+        });
+
+
+    });
+</script>
+
+
+<script type="text/javascript">
+    // 全选样例
+    function checkAll(dst){
+        var treeObj = $.fn.zTree.getZTreeObj("roleZtreeAddEdit");
+        treeObj.checkAllNodes(true);
+    }
+    // 全不选样例
+    function uncheckAll(dst){
+        var treeObj = $.fn.zTree.getZTreeObj("roleZtreeAddEdit");
+        treeObj.checkAllNodes(false);
+    }
+    // 显示全部
+    function showAll(dst){
+        var treeObj = $.fn.zTree.getZTreeObj("roleZtreeAddEdit");
+        treeObj.expandAll(true);
+    }
+    // 隐藏全部
+    function closeAll(dst){
+        var treeObj = $.fn.zTree.getZTreeObj("roleZtreeAddEdit");
+        treeObj.expandAll(false);
+    }
+    /*layui.use(['form', 'admin'], function () {
+        var $ = layui.$;
+        form = layui.form;
+        form.render();
+    });*/
+
+</script>
