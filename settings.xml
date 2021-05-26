@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" 
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+	<localRepository>D:\softForWork\Maven\Reps</localRepository>
+	<pluginGroups>
+	</pluginGroups>
+	<proxies>
+	</proxies>
+
+	<servers>
+		<server>
+			<id>nexus</id>
+			<username>admin</username>
+			<password>thinker@1234</password>
+		</server>
+		<server>
+			<id>snapshots</id>
+			<username>admin</username>
+			<password>thinker@1234</password>
+		</server>
+		
+		<server>
+			<id>releases</id>
+			<username>admin</username>
+			<password>thinker@1234</password>
+		</server>
+	</servers>
+	<mirrors>
+		<mirror>
+			<id>nexus</id>
+			<mirrorOf>*</mirrorOf>
+			<name>nexus</name>
+			<url>http://maven.neweservice.com:8081/nexus/content/groups/public/</url>		
+		</mirror>
+		<mirror>
+		  <id>aliyun-repos</id>
+		  <name>aliyun Release</name>
+		  <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+		  <mirrorOf>central</mirrorOf>        
+		</mirror>
+
+	</mirrors>
+  
+	<profiles>
+		<profile>
+			<id>nexus</id>
+			<repositories>
+				<repository>
+					<id>nexus</id>
+					<name>local private nexus</name>
+					<url>${releases.url}</url>
+				</repository>
+				<repository>
+					<id>thirdparty</id>
+					<url>http://maven.neweservice.com:8081/nexus/content/repositories/thirdparty/</url>
+					<releases>
+						<enabled>true</enabled>
+						<updatePolicy>always</updatePolicy>
+					</releases>
+					<snapshots>
+						<enabled>true</enabled>
+						<updatePolicy>always</updatePolicy>
+					</snapshots>
+				</repository>	
+			</repositories>
+			<pluginRepositories>
+				<pluginRepository>
+					<id>nexus</id>
+					<name>Maven China Mirror</name>
+					<url>${releases.url}</url>
+					<releases>
+						<enabled>true</enabled>
+						<updatePolicy>always</updatePolicy>
+					</releases>
+					<snapshots>
+						<enabled>false</enabled>
+						<updatePolicy>always</updatePolicy>
+					</snapshots>
+				</pluginRepository>
+			</pluginRepositories>
+			<properties>
+				<releases.url>http://maven.neweservice.com:8081/nexus/content/groups/public/</releases.url>
+			</properties>
+		</profile>
+	</profiles>
+	<activeProfiles>
+		<activeProfile>nexus</activeProfile>
+	</activeProfiles>
+	
+</settings>
