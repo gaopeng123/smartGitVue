@@ -1,0 +1,348 @@
+<title>区域代理设置</title>
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto" lay-filter="layadmin-gaopeng-formlist">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">品牌名称：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="gaopengbrandName" placeholder="品牌名称" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <!--                <div class="layui-inline">-->
+                <!--                    <label class="layui-form-label">所属品牌</label>-->
+                <!--                    <div class="layui-input-inline">-->
+                <!--                        <script type="text/html" lay-url="brand/brands" lay-done="layui.data.done(d);" template>-->
+                <!--                            <select name="gaopengName" lay-filter="LAY-brandstore-select-brandcode">-->
+                <!--                                <option value="">请选择品牌</option>-->
+                <!--                                {{# layui.each(d.data, function(index, item){ }}-->
+                <!--                                <option value="{{ item.brandCode }}">{{ item.brandName }}</option>-->
+                <!--                                {{# }); }}-->
+                <!--                            </select>-->
+                <!--                        </script>-->
+                <!--                    </div>-->
+                <!--                </div>-->
+                <!--                <div class="layui-inline">-->
+                <!--                    <label class="layui-form-label">编号</label>-->
+                <!--                    <div class="layui-input-inline">-->
+                <!--                        <select name="gaopengSerialNumber" id="gaopengSerialNumber" lay-filter="">-->
+                <!--                            <option value="">请选择门店</option>-->
+                <!--                        </select>-->
+                <!--                    </div>-->
+                <!--                </div>-->
+                <!--                <div class="layui-inline">-->
+                <!--                    <label class="layui-form-label">创建人</label>-->
+                <!--                    <div class="layui-input-inline">-->
+                <!--                        <select name="departmenCreatet" id="departmenCreatet" lay-filter="">-->
+                <!--                            <option value="">请选择门店</option>-->
+                <!--                        </select>-->
+                <!--                    </div>-->
+                <!--                </div>-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">代理商：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="agentName" placeholder="请输入代理商名称" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">门店名称：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="storeName" placeholder="请输入门店名称" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">联系人：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="peoplr" placeholder="请输入联系人" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">手机号：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="phone" placeholder="请输入手机号" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">申请状态</label>
+                    <div class="layui-input-inline">
+                        <select name="status">
+                            <option value="">全部</option>
+                            <option value="0">正常</option>
+                            <option value="1">禁用</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <button class="layui-btn layuiadmin-btn-gaopeng" lay-submit lay-filter="LAY-gaopeng-back-search">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-card-body">
+            <div style="padding-bottom: 10px;">
+                <button class="layui-btn layuiadmin-btn-gaopeng" data-type="add">添加代理</button>
+            </div>
+            <table id="LAY-gaopeng-back-manage" lay-filter="LAY-gaopeng-back-manage"></table>
+            <script type="text/html" id="table-gaopenglist-gaopeng">
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="gaopengview"><i class="layui-icon layui-icon-survey"></i>查看</a>
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="gaopengedit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="gaopengdel"><i class="layui-icon layui-icon-delete"></i>删除</a>
+            </script>
+        </div>
+    </div>
+</div>
+<script>
+    // layui.data.done = function(d){
+    //     layui.use(['form'], function(){
+    //         var form = layui.form;
+    //         form.render(); //渲染该模板下的动态表单
+    //     });
+    // };
+    layui.use(['admin', 'table'], function(){
+        var $ = layui.$
+            ,view = layui.view
+            ,table = layui.table
+            ,admin = layui.admin
+            ,form = layui.form
+            ,util = layui.util
+
+        form.render(null, 'layadmin-gaopeng-formlist');
+        tablegaopeng()
+        //监听搜索
+        form.on('submit(LAY-gaopeng-back-search)', function(data){
+            var field = data.field;
+            //执行重载
+            table.reload('LAY-gaopeng-back-manage', {
+                where: field
+            });
+        });
+
+        //事件
+        var active = {
+            add: function(){
+                admin.popup({
+                    title: '添加部门'
+                    ,area: ['500px', '400px']
+                    ,shadeClose: false
+                    ,id: 'LAY-popup-gaopeng-add'
+                    ,success: function(layero, index){
+                        view(this.id).render('infrastructure/gaopengAddEdit/index').done(function(){
+                            form.render(null, 'layuiadmin-form-gaopengAddEdit');
+                            //监听提交
+                            form.on('submit(lay-gaopengAddEdit-gaopeng)', function(data){
+                                var field = data.field; //获取提交的字段
+                                var patrnName=/^[A-Za-z0-9]+$///正确
+                                if (!patrnName.exec(field.number)){
+                                    layer.msg("编码只能输入字母和数字",{time:1500});
+                                    return
+                                }
+                                $.ajax({
+                                    method: "post",
+                                    url: "dept/save",
+                                    contentType: 'application/json',
+                                    dataType: "json",
+                                    data: JSON.stringify(field),
+                                    success:function(ret){
+                                        if(ret.code == 0){
+                                            layui.table.reload('LAY-gaopeng-back-manage'); //重载表格
+                                            layer.close(index); //执行关闭
+                                            layer.msg('添加成功',{time:1500});
+                                        }else{
+                                            layer.msg(ret.message,{time:1500});
+                                            return;
+                                        }
+                                    },
+                                    error:function(e){
+                                        layer.msg('添加失败');
+                                        return;
+                                    }
+                                });
+                            });
+                            //监听返回
+                            $('#lay-gaopengAddEdit-gaopeng-cancel').click(function () {
+                                layer.closeAll();
+                            })
+
+                        });
+                    }
+                });
+            }
+        }
+        $('.layui-btn.layuiadmin-btn-gaopeng').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
+    function tablegaopeng() {
+        layui.use(['table', 'form'], function(exports){
+            var $ = layui.$
+                ,admin = layui.admin
+                ,view = layui.view
+                ,table = layui.table
+                ,form = layui.form;
+
+            //部门管理
+            table.render({
+                elem: '#LAY-gaopeng-back-manage'
+                ,url: 'dept/queryall' //模拟接口
+                ,method:'post'
+                ,contentType: 'application/json'
+                // ,where:{
+                //     'brandCode':sessionStorage.getItem('brandCode')//首次加载
+                // }
+                ,cellMinWidth: 100
+                ,cols: [[
+                    {type: 'checkbox', title: '',width: 1},
+                    {field: 'brandName', width: 175, title: '申请门店'}
+                    ,{field: 'number', title: '加盟方式', minWidth: 100}
+                    ,{field: 'deptName', title: '代理商名称',width:95}
+                    ,{field: 'founder', title: '状态',width:95}
+                    ,{field: 'founder', title: '联系人',width:95}
+                    ,{field: 'founder', title: '手机号',width:95}
+                    // ,{field: 'creationTime', title: '创建时间',templet:function(d){
+                    //         var crtTime = new Date(d.creationTime);
+                    //         return dateFormat(crtTime,"yyyy-MM-dd hh:mm:ss");
+                    //     }}
+                    ,{field: 'note', title: '备注',width:75}
+                    ,{title: '操作', width: 250, align:'center', fixed: 'right', toolbar: '#table-gaopeng-gaopeng'}
+                ]]
+
+                ,page: true
+                ,limits:[10,20,50]
+                ,limit:10
+                ,even: true
+            });
+
+            //监听工具条
+            table.on('tool(LAY-gaopeng-back-manage)', function(obj){
+                var data = obj.data;
+                if(obj.event === 'gaopengview'){
+                    admin.popup({
+                        title: '查看部门'
+                        ,area: ['500px', '400px']
+                        ,shadeClose: false
+                        ,id: 'LAY-popup-gaopeng-view'
+                        ,success: function(layero, index){
+                            view(this.id).render('infrastructure/gaopengview/index', data).done(function(){
+                                form.render(null, 'layuiadmin-form-gaopengadd');
+                                $('#gaopengNameAdd').val(data.deptName);
+                                // $('#SerialNumbeAddr').val(data.subordinateBrand);
+                                $('#SerialNumberAdd').val(data.number);
+                                $('#noteAdd').val(data.note);
+                                //监听返回
+                                $('#LAY-gaopengview-submi').click(function () {
+                                    layer.closeAll();
+                                })
+                            });
+                        }
+                    });
+                } else if(obj.event === 'gaopengedit'){
+                    admin.popup({
+                        title: '编辑部门'
+                        ,area: ['500px', '400px']
+                        ,shadeClose: false
+                        ,id: 'LAY-popup-gaopeng-edit'
+                        ,success: function(layero, index){
+                            view(this.id).render('infrastructure/gaopengAddEditAdd/index', data).done(function(){
+                                form.render(null, 'layuiadmin-form-gaopengAddEditAdd');
+                                console.log(data)
+                                $('#gaopengNameAdd').val(data.deptName);
+                                // $('#SerialNumbeAddr').val(data.subordinateBrand);
+                                $('#SerialNumberAdd').val(data.number);
+                                $('#noteAdd').val(data.note);
+                                //监听提交
+                                form.on('submit(lay-addEdit-gaopengAddEditAdd)', function(e){
+                                    var field = e.field; //获取提交的字段
+                                    // var dataJson = {
+                                    //     id:data.id,
+                                    //     brand:'',
+                                    //     note: field.noteAdd,
+                                    //     deptName: field.gaopengNameAdd,
+                                    //     number: field.SerialNumberAdd
+                                    // }
+                                    field.id = data.id
+                                    // var patrn=/^\d+$|^\d+[.]?\d+$////^[0-9a-zA-Z]*$/g;
+                                    // if (!patrn.exec(field.number)){
+                                    //     layer.msg("商品编号只能输入数字",{time:1500});
+                                    //     return
+                                    // }
+                                    var patrnName=/^[A-Za-z0-9]+$/
+                                    if (!patrnName.exec(field.number)){
+                                        layer.msg(" 编码只能输入字母和数字",{time:1500});
+                                        return
+                                    }
+                                    $.ajax({
+                                        method: "post",
+                                        url: "dept/update",
+                                        contentType: 'application/json',
+                                        dataType: "json",
+                                        data: JSON.stringify(field),
+                                        success:function(ret){
+                                            if(ret.code == 0){
+                                                layui.table.reload('LAY-gaopeng-back-manage'); //重载表格
+                                                layer.close(index); //执行关闭
+                                                layer.msg('编辑成功',{time:1500});
+                                            }else{
+                                                layer.msg(ret.message,{time:1500});
+                                                return;
+                                            }
+                                        },
+                                        error:function(e){
+                                            layer.msg('添加失败');
+                                            return;
+                                        }
+                                    });
+                                });
+                                //监听返回
+                                $('#lay-addEdit-gaopengAddEditAdd-cancel').click(function () {
+                                    layer.closeAll();
+                                })
+
+                            });
+                        }
+                    });
+                }else if(obj.event === 'gaopengdel'){
+                    layer.confirm('确认删除该部门么？',function(index){
+                        // var  brandCode = data.brandCode;
+                        // console.log(brandCode)
+                        console.log(data.id)
+                        $.ajax({
+                            type: "get",
+                            url: "dept/delete",
+                            dataType: "json",
+                            contentType: 'application/json',
+                            data: {
+                                id: data.id
+                            },
+                            success:function(ret){
+                                // if(ret.flag == 1){
+                                layer.msg('删除成功',{time:1500});
+                                layui.table.reload('LAY-gaopeng-back-manage'); //重载表格
+                                layer.close(index); //执行关闭
+                                // }else{
+                                //     layer.msg(ret.message,{time:1500});
+                                //     return;
+                                // }
+                            },
+                            error:function(e){
+                                layer.msg('删除失败');
+                                return;
+                            }
+                        });
+                    });
+                }
+            });
+        })
+    }
+</script>
+<style>
+    .line_ht35{
+        line-height: 37px;
+    }
+    .layui-form-label{
+        padding: 9px 15px!important;
+    }
+</style>
