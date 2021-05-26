@@ -1,0 +1,164 @@
+
+
+
+
+layui.define(['table', 'form'], function(exports){
+
+    var $ = layui.$
+        ,admin = layui.admin
+        ,view = layui.view
+        ,table = layui.table
+        ,form = layui.form;
+
+    //部门管理
+    table.render({
+        elem: '#LAY-department-back-manage'
+        ,url: 'dept/queryall' //模拟接口
+        ,method:'post'
+        ,contentType: 'application/json'
+        // ,where:{
+        //     'brandCode':sessionStorage.getItem('brandCode')//首次加载
+        // }
+        ,cellMinWidth: 100
+        ,cols: [[
+            // {type: '', title: '',width: 1}
+            {field: 'brandName', width: 175, title: '所属品牌'}
+            ,{field: 'number', title: '编号', minWidth: 100}
+            ,{field: 'deptName', title: '部门名称',width:95}
+            ,{field: 'founder', title: '创建人',width:95}
+            ,{field: 'creationTime', title: '创建时间',templet:function(d){
+                    var crtTime = new Date(d.creationTime);
+                    return dateFormat(crtTime,"yyyy-MM-dd hh:mm:ss");
+                }}
+            ,{field: 'note', title: '备注',width:75}
+            ,{title: '操作', width: 250, align:'center', fixed: 'right', toolbar: '#table-departmentlist-department'}
+        ]]
+
+        ,page: true
+        ,limits:[10,20,50]
+        ,limit:10
+        ,even: true
+    });
+
+    //监听工具条
+    table.on('tool(LAY-department-back-manage)', function(obj){
+        var data = obj.data;
+        if(obj.event === 'departmentview'){
+            admin.popup({
+                title: '查看部门'
+                ,area: ['500px', '400px']
+                ,shadeClose: false
+                ,id: 'LAY-popup-department-view'
+                ,success: function(layero, index){
+                    view(this.id).render('infrastructure/departmentview/index', data).done(function(){
+                        form.render(null, 'layuiadmin-form-departmentadd');
+                        $('#departmentNameAdd').val(data.deptName);
+                        // $('#SerialNumbeAddr').val(data.subordinateBrand);
+                        $('#SerialNumberAdd').val(data.number);
+                        $('#noteAdd').val(data.note);
+                        //监听返回
+                        $('#LAY-departmentview-submi').click(function () {
+                            layer.closeAll();
+                        })
+                    });
+                }
+            });
+        } else if(obj.event === 'departmentedit'){
+            admin.popup({
+                title: '编辑部门'
+                ,area: ['500px', '400px']
+                ,shadeClose: false
+                ,id: 'LAY-popup-department-edit'
+                ,success: function(layero, index){
+                    view(this.id).render('infrastructure/departmentAddEditAdd/index', data).done(function(){
+                        form.render(null, 'layuiadmin-form-departmentAddEditAdd');
+                        console.log(data)
+                        $('#departmentNameAdd').val(data.deptName);
+                        // $('#SerialNumbeAddr').val(data.subordinateBrand);
+                        $('#SerialNumberAdd').val(data.number);
+                        $('#noteAdd').val(data.note);
+                        //监听提交
+                        form.on('submit(lay-addEdit-departmentAddEditAdd)', function(e){
+                            var field = e.field; //获取提交的字段
+                            // var dataJson = {
+                            //     id:data.id,
+                            //     brand:'',
+                            //     note: field.noteAdd,
+                            //     deptName: field.departmentNameAdd,
+                            //     number: field.SerialNumberAdd
+                            // }
+                            field.id = data.id
+                            // var patrn=/^\d+$|^\d+[.]?\d+$////^[0-9a-zA-Z]*$/g;
+                            // if (!patrn.exec(field.number)){
+                            //     layer.msg("商品编号只能输入数字",{time:1500});
+                            //     return
+                            // }
+                            var patrnName=/^[A-Za-z0-9]+$/
+                            if (!patrnName.exec(field.number)){
+                                layer.msg(" 编码只能输入字母和数字",{time:1500});
+                                return
+                            }
+                            $.ajax({
+                                method: "post",
+                                url: "dept/update",
+                                contentType: 'application/json',
+                                dataType: "json",
+                                data: JSON.stringify(field),
+                                success:function(ret){
+                                    if(ret.code == 0){
+                                        layui.table.reload('LAY-department-back-manage'); //重载表格
+                                        layer.close(index); //执行关闭
+                                        layer.msg('编辑成功',{time:1500});
+                                    }else{
+                                        layer.msg(ret.message,{time:1500});
+                                        return;
+                                    }
+                                },
+                                error:function(e){
+                                    layer.msg('添加失败');
+                                    return;
+                                }
+                            });
+                        });
+                        //监听返回
+                        $('#lay-addEdit-departmentAddEditAdd-cancel').click(function () {
+                            layer.closeAll();
+                        })
+
+                    });
+                }
+            });
+        }else if(obj.event === 'departmentdel'){
+            layer.confirm('确认删除该部门么？',function(index){
+                // var  brandCode = data.brandCode;
+                // console.log(brandCode)
+                console.log(data.id)
+                $.ajax({
+                    type: "get",
+                    url: "dept/delete",
+                    dataType: "json",
+                    contentType: 'application/json',
+                    data: {
+                        id: data.id
+                    },
+                    success:function(ret){
+                        // if(ret.flag == 1){
+                            layer.msg('删除成功',{time:1500});
+                            layui.table.reload('LAY-department-back-manage'); //重载表格
+                            layer.close(index); //执行关闭
+                        // }else{
+                        //     layer.msg(ret.message,{time:1500});
+                        //     return;
+                        // }
+                    },
+                    error:function(e){
+                        layer.msg('删除失败');
+                        return;
+                    }
+                });
+            });
+        }
+    });
+
+    exports('department', {})
+})
